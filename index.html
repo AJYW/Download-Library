@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="给朋友们准备的游戏安装包下载站">
+<title>朋友游戏库</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%230B0F1A"/><path d="M18 40h8m12 0h8M24 34v8M40 36v8" stroke="%23FFB020" stroke-width="5" stroke-linecap="round" fill="none"/><rect x="12" y="26" width="40" height="18" rx="8" fill="none" stroke="%23FFB020" stroke-width="5"/></svg>'>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Press+Start+2P&display=swap">
+<style>
+/* ===== 基础 ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0E18;
+  --panel:#131B2C;
+  --panel-2:#182238;
+  --line:#232F47;
+  --text:#EDF1F8;
+  --muted:#98A4BD;
+  --accent:#FFB020;
+  --accent-deep:#E08F00;
+  --radius:14px;
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+input{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* ===== 按钮 ===== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:0 18px;border-radius:10px;
+  font-weight:700;font-size:14px;line-height:1;
+  transition:background .15s,color .15s,border-color .15s,transform .05s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-lg{min-height:52px;padding:0 24px;font-size:15px}
+.btn-primary{background:var(--accent);color:#14100A}
+.btn-primary:hover{background:#FFC44D}
+.btn-primary.is-off{background:var(--panel-2);color:var(--muted);cursor:not-allowed;box-shadow:none}
+.btn-ghost{border:1px solid var(--line);color:var(--text);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:#3A4A6E;background:var(--panel-2)}
+.btn svg{flex:none}
+
+/* ===== 图标 ===== */
+.ico{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ico-lg{width:18px;height:18px}
+
+/* ===== Hero ===== */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%,rgba(255,176,32,.14),transparent 65%),
+    radial-gradient(ellipse 60% 50% at 85% 110%,rgba(77,215,254,.06),transparent 60%),
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px) 0 0/46px 46px,
+    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px) 0 0/46px 46px;
+}
+.hero-inner{position:relative;padding-block:64px 56px;text-align:center}
+.kicker{
+  font-family:"Press Start 2P","Courier New",monospace;
+  font-size:10px;letter-spacing:2px;color:var(--accent);
+  margin-bottom:20px;text-transform:uppercase;
+}
+.hero-title{font-size:clamp(34px,7vw,54px);font-weight:900;letter-spacing:1px;line-height:1.2}
+.hero-sub{font-size:clamp(17px,3vw,22px);font-weight:700;margin-top:14px;color:var(--accent)}
+.hero-note{color:var(--muted);margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px}
+.hero-count{color:var(--muted);font-size:13px;margin-top:26px}
+
+/* ===== 库头部 ===== */
+#library{padding-block:48px 72px}
+.lib-head{display:flex;flex-direction:column;gap:18px;margin-bottom:26px}
+.lib-title{font-size:24px;font-weight:900;display:flex;align-items:baseline;gap:12px}
+.lib-title .count{font-size:13px;font-weight:500;color:var(--muted)}
+.search{
+  position:relative;display:flex;align-items:center;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:0 14px;min-height:48px;
+}
+.search:focus-within{border-color:var(--accent)}
+.search svg{color:var(--muted);flex:none;width:18px;height:18px}
+.search input{
+  flex:1;min-width:0;background:none;border:none;outline:none;color:var(--text);
+  font-size:16px;padding:12px 10px;
+}
+.search input::placeholder{color:var(--muted)}
+.search-kbd{
+  color:var(--muted);border:1px solid var(--line);border-radius:6px;
+  font-size:12px;padding:2px 7px;font-family:"Courier New",monospace;
+}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{
+  min-height:40px;padding:0 16px;border-radius:999px;
+  border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:500;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.chip:hover{border-color:#3A4A6E;color:var(--text)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#14100A;font-weight:700}
+
+/* ===== 游戏卡片 ===== */
+.games{display:grid;grid-template-columns:1fr;gap:20px}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:border-color .15s,background .15s;
+}
+.card:hover{border-color:#3A4A6E;background:var(--panel-2)}
+.cover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--panel-2)}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover-tile{position:absolute;inset:0}
+.cover-tile::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/100% 5px,
+    radial-gradient(ellipse 80% 70% at 20% 0%,rgba(255,255,255,.08),transparent 60%);
+  opacity:.5;
+}
+.tile-initial{
+  position:absolute;right:10px;bottom:2px;
+  font-size:88px;font-weight:900;line-height:1;
+  color:rgba(255,255,255,.12);letter-spacing:0;
+  user-select:none;pointer-events:none;
+}
+.cat-chip{
+  position:absolute;top:10px;left:10px;z-index:2;
+  background:rgba(10,14,24,.72);border:1px solid rgba(255,255,255,.14);
+  color:var(--text);font-size:11px;font-weight:500;
+  padding:4px 10px;border-radius:999px;backdrop-filter:blur(2px);
+}
+.card-body{padding:16px 16px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card-name{font-size:17px;font-weight:900;line-height:1.35;word-break:break-all}
+.card-meta{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  font-size:11px;color:var(--muted);border:1px solid var(--line);
+  padding:2px 9px;border-radius:6px;line-height:1.5;
+}
+.card-note{color:var(--muted);font-size:13px;line-height:1.55;flex:1}
+.card-actions{display:flex;gap:10px;margin-top:2px}
+.card-actions .btn{flex:1}
+
+/* ===== 空态 ===== */
+.empty{
+  border:1px dashed var(--line);border-radius:var(--radius);
+  padding:48px 20px;text-align:center;color:var(--muted);
+}
+.empty p{margin-bottom:18px}
+
+/* ===== 页脚 ===== */
+footer{border-top:1px solid var(--line);padding:36px 0 44px;text-align:center;color:var(--muted);font-size:13px}
+.foot-note{margin-bottom:6px}
+.foot-sub{opacity:.8}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);
+  background:#101827;border:1px solid var(--line);border-left:3px solid var(--accent);
+  color:var(--text);font-size:14px;padding:12px 20px;border-radius:10px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  z-index:99;max-width:calc(100vw - 40px);text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ===== 桌面增强 ===== */
+@media (min-width:600px){
+  .games{grid-template-columns:repeat(2,1fr)}
+  .hero-inner{padding-block:84px 68px}
+}
+@media (min-width:1024px){
+  .games{grid-template-columns:repeat(3,1fr)}
+  .hero-inner{padding-block:104px 84px}
+  .lib-head{flex-direction:row;align-items:flex-end;justify-content:space-between}
+  .lib-tools{flex:1;max-width:560px}
+  .search{min-height:52px}
+}
+</style>
+</head>
+<body>
+
+<!--
+  ════════════════════════════════════════════════════════════════
+  【站长使用说明】用记事本 / VS Code 打开本文件编辑，保存后刷新浏览器即可看到变化。
+
+  1. 网站名字 / 简介：改下方 SITE 里的文字。
+  2. 添加一款游戏：在 GAMES 数组里复制一行 { ... }，改成你的内容：
+       name     游戏名（必填）
+       category 分类，自动生成筛选按钮（如：单机 / 联机 / 模拟器）
+       version  版本号，如 "v1.2.3"
+       size     安装包大小，如 "2.4 GB"
+       note     一句话说明（可不填）
+       link     下载链接：网盘分享链接 或 GitHub Release 的文件直链（不填则按钮显示“链接待补充”）
+       cover    封面图片网址（可不填，不填自动生成封面）
+       color    封面主题色，任意颜色，如 "#FFB020"（可不填）
+     注意：每两条 { ... } 之间要用英文逗号隔开。
+  3. 删除示例：直接把示例那两行 { ... } 删掉即可。
+  ════════════════════════════════════════════════════════════════
+-->
+<script>
+/* ================= 站点配置（站长改这里） ================= */
+const SITE = {
+  title:  "朋友游戏库",
+  sub:    "官网找不到？这里直接下。",
+  note:   "给朋友们备好的游戏安装包——找到游戏，点下载，装好就能玩。",
+  foot:   "本站为个人分享用途，仅供学习交流，请支持正版。"
+};
+
+const GAMES = [
+  /* ---- 示例数据：正式使用时删掉这两条，复制下方格式添加你的游戏 ---- */
+  {
+    name: "示例游戏·动作", category: "单机", version: "v1.2.3", size: "2.4 GB",
+    note: "这是一条示例数据，站长记得替换成真实游戏。",
+    link: "", cover: "", color: "#FFB020"
+  },
+  {
+    name: "示例游戏·联机", category: "联机", version: "v0.9", size: "1.8 GB",
+    note: "示例数据。把下载链接填到 link 后，朋友点「下载」就能拿到安装包。",
+    link: "", cover: "", color: "#3B82F6"
+  }
+  /* 新游戏示例（复制下面这段，去掉注释符号后放到上面] 前）：
+  ,{
+    name: "游戏名", category: "单机", version: "v1.0", size: "1.2 GB",
+    note: "一句话介绍",
+    link: "https://你的下载链接", cover: "", color: "#22C55E"
+  }
+  */
+];
+/* =========================================================== */
+</script>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <p class="kicker">Friends' Game Stash</p>
+    <h1 class="hero-title" id="heroTitle"></h1>
+    <p class="hero-sub" id="heroSub"></p>
+    <p class="hero-note" id="heroNote"></p>
+    <div class="hero-actions">
+      <a class="btn btn-primary btn-lg" href="#library">
+        <svg class="ico ico-lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M12 3v12m0 0 5-5m-5 5-5-5"/></svg>
+        看看有哪些游戏
+      </a>
+      <button class="btn btn-ghost btn-lg" id="copyPageBtn" type="button">
+        <svg class="ico ico-lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        复制本页地址
+      </button>
+    </div>
+    <p class="hero-count" id="heroCount"></p>
+  </div>
+</header>
+
+<main id="library" class="wrap">
+  <div class="lib-head">
+    <h2 class="lib-title">游戏列表 <span class="count" id="libCount"></span></h2>
+    <div class="lib-tools">
+      <label class="search" for="searchInput">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="searchInput" type="search" placeholder="搜游戏名…" autocomplete="off">
+        <span class="search-kbd" aria-hidden="true">/</span>
+      </label>
+      <div class="chips" id="chips" role="group" aria-label="按分类筛选"></div>
+    </div>
+  </div>
+
+  <div class="games" id="games"></div>
+
+  <div class="empty" id="empty" hidden>
+    <p>没有找到匹配的游戏。</p>
+    <button class="btn btn-ghost" id="resetBtn" type="button">清除筛选</button>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="foot-note" id="footNote"></p>
+    <p class="foot-sub">下载遇到问题？找站长要新链接。</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 工具 ---------- */
+  var BG = "#0A0E18";
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function parseHex(hex){
+    var h = String(hex || "").replace("#","").trim();
+    if(!/^[0-9a-fA-F]{6}$/.test(h)) return null;
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  function mixTo(hex, ratio){
+    var c = parseHex(hex);
+    if(!c) return hex;
+    var b = parseHex(BG);
+    var m = function(a, t){ return Math.round(a + (t - a) * ratio); };
+    return "#" + [m(c[0],b[0]), m(c[1],b[1]), m(c[2],b[2])]
+      .map(function(x){ return x.toString(16).padStart(2,"0"); }).join("");
+  }
+  function toast(msg){
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ el.classList.remove("show"); }, 2200);
+  }
+  function copyText(text, okMsg, emptyMsg){
+    if(!text){ toast(emptyMsg); return; }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand("copy"); toast(okMsg); }
+      catch(e){ toast("复制失败，请手动复制"); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(function(){ toast(okMsg); }, fallback);
+    }else{ fallback(); }
+  }
+
+  /* ---------- 渲染 ---------- */
+  var state = { q:"", cat:"全部" };
+
+  function categories(){
+    var seen = [], list = ["全部"];
+    GAMES.forEach(function(g){
+      var c = (g.category || "其他").trim();
+      if(list.indexOf(c) === -1 && seen.indexOf(c) === -1){ seen.push(c); list.push(c); }
+    });
+    return list;
+  }
+
+  function visible(){
+    var q = state.q.trim().toLowerCase();
+    return GAMES.filter(function(g){
+      var catOk = state.cat === "全部" || (g.category || "其他").trim() === state.cat;
+      var qOk = !q || ((g.name||"") + " " + (g.note||"") + " " + (g.category||"")).toLowerCase().indexOf(q) !== -1;
+      return catOk && qOk;
+    });
+  }
+
+  function tileHTML(g, i){
+    var color = parseHex(g.color) ? g.color : "#3B82F6";
+    var grad = "linear-gradient(160deg," + color + " 0%," + mixTo(color, .74) + " 100%)";
+    var initial = esc((g.name || "?").trim().slice(0,1).toUpperCase());
+    return '<div class="cover-tile" style="background:' + color + ';background-image:' + grad + '">' +
+      '<span class="tile-initial">' + initial + '</span></div>';
+  }
+
+  function cardHTML(g, i){
+    var cover = g.cover
+      ? '<img src="' + esc(g.cover) + '" alt="' + esc(g.name) + ' 封面" loading="lazy" onerror="this.outerHTML=window.__tile(' + i + ')">'
+      : tileHTML(g, i);
+    var chip = '<span class="cat-chip">' + esc(g.category || "其他") + '</span>';
+    var meta = [g.version, g.size].filter(Boolean)
+      .map(function(x){ return '<span class="tag">' + esc(x) + '</span>'; }).join("");
+    var note = g.note ? '<p class="card-note">' + esc(g.note) + '</p>' : "";
+    var dl = g.link
+      ? '<a class="btn btn-primary" href="' + esc(g.link) + '" target="_blank" rel="noopener">' +
+        '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>下载安装包</a>'
+      : '<button class="btn btn-primary is-off" type="button" disabled>链接待补充</button>';
+    var copy = '<button class="btn btn-ghost copy-btn" type="button" data-i="' + i + '" aria-label="复制 ' + esc(g.name) + ' 的下载链接">' +
+      '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>复制链接</button>';
+    return '<article class="card">' +
+      '<div class="cover">' + cover + chip + '</div>' +
+      '<div class="card-body">' +
+        '<h3 class="card-name">' + esc(g.name) + '</h3>' +
+        (meta ? '<div class="card-meta">' + meta + '</div>' : "") +
+        note +
+        '<div class="card-actions">' + dl + copy + '</div>' +
+      '</div></article>';
+  }
+
+  function render(){
+    /* 站点信息 */
+    document.getElementById("heroTitle").textContent = SITE.title;
+    document.getElementById("heroSub").textContent = SITE.sub;
+    document.getElementById("heroNote").textContent = SITE.note;
+    document.getElementById("footNote").textContent = SITE.foot;
+    document.title = SITE.title;
+    document.getElementById("heroCount").textContent = "库里现有 " + GAMES.length + " 款游戏，站长持续补充中";
+
+    /* 分类按钮 */
+    var cats = categories();
+    var chipsEl = document.getElementById("chips");
+    chipsEl.innerHTML = "";
+    cats.forEach(function(c){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.textContent = c;
+      b.setAttribute("aria-pressed", c === state.cat ? "true" : "false");
+      b.addEventListener("click", function(){
+        state.cat = c;
+        render();
+      });
+      chipsEl.appendChild(b);
+    });
+
+    /* 游戏列表 */
+    var list = visible();
+    var gamesEl = document.getElementById("games");
+    gamesEl.innerHTML = list.map(cardHTML).join("");
+    document.getElementById("libCount").textContent = "共 " + list.length + " 款";
+    document.getElementById("empty").hidden = list.length !== 0;
+
+    /* 搜索框值同步 */
+    var si = document.getElementById("searchInput");
+    if(si.value !== state.q) si.value = state.q;
+  }
+
+  window.__tile = tileHTML; /* 图片加载失败时替换为自动封面 */
+
+  /* ---------- 事件 ---------- */
+  document.getElementById("searchInput").addEventListener("input", function(){
+    state.q = this.value;
+    render();
+  });
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    state.q = ""; state.cat = "全部";
+    render();
+    document.getElementById("searchInput").focus();
+  });
+  document.getElementById("copyPageBtn").addEventListener("click", function(){
+    copyText(location.href, "页面地址已复制", "");
+  });
+  document.getElementById("games").addEventListener("click", function(e){
+    var btn = e.target.closest(".copy-btn");
+    if(!btn) return;
+    var g = GAMES[Number(btn.getAttribute("data-i"))];
+    copyText(g && g.link, "下载链接已复制", "这个游戏的下载链接还没填好，找站长要吧");
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "/" && document.activeElement !== document.getElementById("searchInput")){
+      e.preventDefault();
+      document.getElementById("searchInput").focus();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
